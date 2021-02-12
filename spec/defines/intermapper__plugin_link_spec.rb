@@ -1,50 +1,57 @@
 require 'spec_helper'
 
-describe 'intermapper::nagios_plugin_link', :type => :define do
-  npd='/usr/lib64/nagios-plugins'
-  t='my_nagios_plugin'
+describe 'intermapper::nagios_plugin_link', type: :define do
+  npd = '/usr/lib64/nagios-plugins'
+  t = 'my_nagios_plugin'
   baseparams = {
     'nagios_plugins_dir' => npd,
   }
   let(:title) { t }
-  targetfname="#{npd}/#{t}"
-  fname="/var/local/InterMapper_Settings/Tools/#{t}"
+
+  targetfname = "#{npd}/#{t}"
+  fname = "/var/local/InterMapper_Settings/Tools/#{t}"
 
   ['CentOS', 'RedHat', 'Solaris'].each do |system|
     context "when on system #{system}" do
-      let(:params) {baseparams}
+      let(:params) { baseparams }
+
       if system == 'CentOS'
-        let(:facts) {{
-          :osfamily        => 'RedHat',
-          :operatingsystem => system,
-        }}
+        let(:facts) do
+          {
+            osfamily: 'RedHat',
+            operatingsystem: system,
+          }
+        end
       else
-        let(:facts) {{
-          :osfamily        => system,
-          :operatingsystem => system,
-        }}
+        let(:facts) do
+          {
+            osfamily: system,
+            operatingsystem: system,
+          }
+        end
       end
 
       describe 'with defaults' do
-        it { should contain_file(fname)\
-             .that_notifies('Class[intermapper::service]') }
+        it {
+          is_expected.to contain_file(fname)\
+            .that_notifies('Class[intermapper::service]')
+        }
       end
 
       {
-        :present => [:link, targetfname],
-        :link    => [:link, targetfname],
-        :absent  => [:absent, nil],
-        :missing => [:absent, nil],
-      }.each do |k,v|
+        present: [:link, targetfname],
+        link: [:link, targetfname],
+        absent: [:absent, nil],
+        missing: [:absent, nil],
+      }.each do |k, v|
         context "with ensure == #{k}" do
-          let(:params) {
-            super().merge({:ensure      => "#{k}"})
-          }
+          let(:params) do
+            super().merge(ensure: k.to_s)
+          end
+
           it do
-            should contain_file(fname).with({
-              :ensure => v[0],
-              :target => v[1],
-            })
+            is_expected.to contain_file(fname).with(ensure: v[0],
+                                                    target: v[1])
           end
         end
       end

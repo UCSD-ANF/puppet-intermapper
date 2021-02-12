@@ -154,10 +154,10 @@ class intermapper (
   $settingsdir="${vardir}/InterMapper_Settings"
   $toolsdir="${settingsdir}/Tools"
 
-  anchor {'intermapper::begin': } ->
-  class {'::intermapper::install': } ->
-  class {'::intermapper::nagios': } ~>
-  class {'::intermapper::service': } ->
-  class {'::intermapper::service_extra': } ->
-  anchor {'intermapper::end': }
+  anchor {'intermapper::begin': }
+  -> class {'::intermapper::install': }
+  -> class {'::intermapper::nagios': }
+  ~> class {'::intermapper::service': }
+  -> class {'::intermapper::service_extra': }
+  -> anchor {'intermapper::end': }
 }
