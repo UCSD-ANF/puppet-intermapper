@@ -31,6 +31,10 @@ describe 'intermapper', type: :class do
       it { is_expected.to contain_class('intermapper::nagios') }
       it { is_expected.to contain_class('intermapper::service') }
       it { is_expected.to contain_class('intermapper::service_extra') }
+      
+      # Test anchor resources for ordering
+      it { is_expected.to contain_anchor('intermapper::begin') }
+      it { is_expected.to contain_anchor('intermapper::end') }
 
       describe 'intermapper::install' do
         let(:params) do
@@ -358,6 +362,140 @@ describe 'intermapper', type: :class do
               is_expected.to contain_service('intermapperd').with(provider: nil,
                                                                   status: nil)
             }
+          end
+        end
+        
+        context 'with comprehensive nagios plugin testing' do
+          ['RedHat', 'CentOS'].each do |osname|
+            context "with operatingsystem == #{osname}" do
+              let(:facts) do
+                {
+                  os: {
+                    family: 'RedHat',
+                    name: osname,
+                  },
+                  osfamily: 'RedHat',
+                  operatingsystem: osname,
+                }
+              end
+    
+              describe 'with nagios enabled and all plugins' do
+                let(:params) do
+                  {
+                    nagios_manage: true,
+                    nagios_ensure: 'present',
+                    nagios_plugins_dir: '/usr/lib64/nagios-plugins',
+                    nagios_link_plugins: [
+                      'check_nrpe', 'check_disk', 'check_file_age',
+                      'check_ftp', 'check_icmp', 'check_mailq',
+                      'check_procs', 'check_snmp', 'check_tcp', 'check_udp'
+                    ],
+                  }
+                end
+    
+                # Test that all the nagios plugin links are created
+                [
+                  'check_nrpe', 'check_disk', 'check_file_age',
+                  'check_ftp', 'check_icmp', 'check_mailq',
+                  'check_procs', 'check_snmp', 'check_tcp', 'check_udp'
+                ].each do |plugin|
+                  it do
+                    is_expected.to contain_intermapper__nagios_plugin_link(plugin).with(
+                      ensure: 'present',
+                      nagios_plugins_dir: '/usr/lib64/nagios-plugins'
+                    )
+                  end
+                  
+                  # These should create intermapper::tool resources
+                  it do
+                    is_expected.to contain_intermapper__tool(plugin).with(
+                      ensure: 'link',
+                      target: "/usr/lib64/nagios-plugins/#{plugin}"
+                    )
+                  end
+    
+                  # These should create File resources in Tools directory
+                  it do
+                    is_expected.to contain_file("/var/local/InterMapper_Settings/Tools/#{plugin}").with(
+                      ensure: 'link',
+                      target: "/usr/lib64/nagios-plugins/#{plugin}"
+                    )
+                  end
+                end
+              end
+    
+              describe 'with custom tools to exercise more file resources' do
+                let(:params) do
+                  {
+                    nagios_manage: true,
+                    nagios_ensure: 'present',
+                    nagios_plugins_dir: '/usr/lib64/nagios-plugins',
+                    nagios_link_plugins: ['foo', 'bar', 'baz'],
+                  }
+                end
+    
+                ['foo', 'bar', 'baz'].each do |tool|
+                  it do
+                    is_expected.to contain_intermapper__tool(tool).with(
+                      ensure: 'link',
+                      target: "/usr/lib64/nagios-plugins/#{tool}"
+                    )
+                  end
+    
+                  it do
+                    is_expected.to contain_file("/var/local/InterMapper_Settings/Tools/#{tool}").with(
+                      ensure: 'link',
+                      target: "/usr/lib64/nagios-plugins/#{tool}"
+                    )
+                  end
+                end
+              end
+              
+              describe 'with specific plugin to test my_nagios_plugin resource' do
+                let(:params) do
+                  {
+                    nagios_manage: true,
+                    nagios_ensure: 'present',
+                    nagios_plugins_dir: '/usr/lib64/nagios-plugins',
+                    nagios_link_plugins: ['my_nagios_plugin'],
+                  }
+                end
+    
+                it do
+                  is_expected.to contain_intermapper__tool('my_nagios_plugin').with(
+                    ensure: 'link',
+                    target: '/usr/lib64/nagios-plugins/my_nagios_plugin'
+                  )
+                end
+              end
+            end
+          end
+        end
+        
+        context 'to test alternate package name' do
+          context 'on system with InterMapper package' do
+            let(:facts) do
+              {
+                os: {
+                  family: 'RedHat',
+                  name: 'RedHat',
+                },
+                osfamily: 'RedHat',
+                operatingsystem: 'RedHat',
+              }
+            end
+    
+            describe 'with package_name InterMapper' do
+              let(:params) do
+                {
+                  package_manage: true,
+                  package_name: 'InterMapper',
+                  package_ensure: 'present',
+                }
+              end
+    
+              it { is_expected.to contain_package('InterMapper').with_ensure('present') }
+            end
           end
         end
       end
