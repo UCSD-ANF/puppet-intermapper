@@ -1,0 +1,113 @@
+---
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  static:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+
+      - name: Run static analysis
+        run: |
+          bundle exec rake metadata_lint
+          bundle exec rake syntax
+          bundle exec rake lint
+          bundle exec rake rubocop
+
+  unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        puppet:
+          - '~> 7.0'
+          - '~> 8.0'
+        ruby:
+          - '2.7'
+          - '3.0'
+          - '3.1'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run unit tests
+        run: bundle exec rake spec
+        env:
+          PUPPET_GEM_VERSION: ${{ matrix.puppet }}
+          COVERAGE: 'yes'
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: matrix.puppet == '~> 7.0' && matrix.ruby == '3.0'
+        with:
+          file: ./coverage/coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+
+  acceptance:
+    name: Acceptance Tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    strategy:
+      matrix:
+        os:
+          - centos-7
+          - centos-8
+          - rocky-8
+          - rocky-9
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+
+      - name: Run acceptance tests
+        run: bundle exec rake litmus:provision_list[${{ matrix.os }}]
+        env:
+          PUPPET_INSTALL_TYPE: agent
+          BEAKER_PUPPET_COLLECTION: puppet7
+
+  release:
+    name: Release to Puppet Forge
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[forge-release]')
+    needs: [static, unit]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+
+      - name: Deploy to Puppet Forge
+        run: bundle exec rake module:push
+        env:
+          BLACKSMITH_FORGE_USERNAME: ${{ secrets.PUPPET_FORGE_USERNAME }}
+          BLACKSMITH_FORGE_PASSWORD: ${{ secrets.PUPPET_FORGE_PASSWORD }}

@@ -112,38 +112,32 @@
 # Class[intermapper::service] can be set to subscribe to the probe files.
 #
 class intermapper (
-  $basedir                = '/usr/local',
-  $vardir                 = '/var/local',
-  $owner                  = 'intermapper',
-  $group                  = 'intermapper',
-  $package_ensure         = 'present',
-  $package_manage         = true,
-  $package_name           = $intermapper::params::package_name,
-  $package_provider       = $intermapper::params::package_provider,
-  $package_source         = undef,
-  $service_manage         = true,
-  $service_imdc_manage    = true,
-  $service_imflows_manage = true,
-  $service_ensure         = 'running',
-  $service_imdc_ensure    = 'stopped',
-  $service_imflows_ensure = 'stopped',
-  $service_name           = $intermapper::params::service_name,
-  $service_imdc_name      = 'imdc',
-  $service_imflows_name   = 'imflows',
-  $service_provider       = $intermapper::params::service_provider,
-  $service_status_cmd     = $intermapper::params::service_status_cmd,
-  $service_has_restart    = $intermapper::params::service_has_restart,
-  $nagios_ensure          = 'present',
-  $nagios_manage          = false,
-  $nagios_plugins_dir     = undef,
-  $nagios_link_plugins    = $intermapper::params::nagios_link_plugins,
+  Stdlib::Absolutepath $basedir                = '/usr/local',
+  Stdlib::Absolutepath $vardir                 = '/var/local',
+  String[1] $owner                             = 'intermapper',
+  String[1] $group                             = 'intermapper',
+  String[1] $package_ensure                    = 'present',
+  Boolean $package_manage                      = true,
+  Variant[String[1], Array[String[1]]] $package_name = $intermapper::params::package_name,
+  Optional[String[1]] $package_provider        = $intermapper::params::package_provider,
+  Optional[String[1]] $package_source          = undef,
+  Boolean $service_manage                      = true,
+  Boolean $service_imdc_manage                 = true,
+  Boolean $service_imflows_manage              = true,
+  Stdlib::Ensure::Service $service_ensure      = 'running',
+  Stdlib::Ensure::Service $service_imdc_ensure = 'stopped',
+  Stdlib::Ensure::Service $service_imflows_ensure = 'stopped',
+  String[1] $service_name                      = $intermapper::params::service_name,
+  String[1] $service_imdc_name                 = 'imdc',
+  String[1] $service_imflows_name              = 'imflows',
+  Optional[String[1]] $service_provider        = $intermapper::params::service_provider,
+  Optional[String[1]] $service_status_cmd      = $intermapper::params::service_status_cmd,
+  Boolean $service_has_restart                 = $intermapper::params::service_has_restart,
+  Enum['present', 'absent', 'missing'] $nagios_ensure = 'present',
+  Boolean $nagios_manage                       = false,
+  Optional[Stdlib::Absolutepath] $nagios_plugins_dir = undef,
+  Array[String[1]] $nagios_link_plugins        = $intermapper::params::nagios_link_plugins,
 ) inherits intermapper::params {
-  validate_bool($nagios_manage)
-  validate_bool($package_manage)
-  validate_bool($service_manage)
-  validate_bool($service_has_restart)
-  validate_re($nagios_ensure, ['^present','^absent','^missing'])
-
   if $nagios_manage {
     if $nagios_ensure == 'present' and $nagios_plugins_dir == undef {
       fail(
@@ -151,13 +145,13 @@ class intermapper (
     }
   }
 
-  $settingsdir="${vardir}/InterMapper_Settings"
-  $toolsdir="${settingsdir}/Tools"
+  $settingsdir = "${vardir}/InterMapper_Settings"
+  $toolsdir = "${settingsdir}/Tools"
 
-  anchor {'intermapper::begin': }
-  -> class {'::intermapper::install': }
-  -> class {'::intermapper::nagios': }
-  ~> class {'::intermapper::service': }
-  -> class {'::intermapper::service_extra': }
-  -> anchor {'intermapper::end': }
+  anchor { 'intermapper::begin': }
+  -> class { '::intermapper::install': }
+  -> class { '::intermapper::nagios': }
+  ~> class { '::intermapper::service': }
+  -> class { '::intermapper::service_extra': }
+  -> anchor { 'intermapper::end': }
 }

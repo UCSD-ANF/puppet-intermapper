@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
-require 'puppet_litmus/rake_tasks' if Bundler.rubygems.find_name('puppet_litmus').any?
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-syntax/tasks/puppet-syntax'
-require 'puppet_blacksmith/rake_tasks' if Bundler.rubygems.find_name('puppet-blacksmith').any?
-require 'github_changelog_generator/task' if Bundler.rubygems.find_name('github_changelog_generator').any?
-require 'puppet-strings/tasks' if Bundler.rubygems.find_name('puppet-strings').any?
+require 'puppet-lint/tasks/puppet-lint'
+require 'metadata-json-lint/rake_task'
+
+if Bundler.rubygems.find_name('github_changelog_generator').any?
+  require 'github_changelog_generator/task'
+end
 
 def changelog_user
   return unless Rake.application.top_level_tasks.include? "changelog"
@@ -40,7 +42,25 @@ def changelog_future_release
   returnVal
 end
 
+# Configure puppet-lint
 PuppetLint.configuration.send('disable_relative')
+PuppetLint.configuration.send('disable_80chars')
+PuppetLint.configuration.send('disable_140chars')
+PuppetLint.configuration.send('disable_class_inherits_from_params_class')
+PuppetLint.configuration.send('disable_class_parameter_defaults')
+PuppetLint.configuration.send('disable_documentation')
+PuppetLint.configuration.send('disable_single_quote_string_with_variables')
+
+# Configure puppet-syntax
+PuppetSyntax.exclude_paths = [
+  'spec/**/*',
+  'pkg/**/*',
+  'vendor/**/*',
+  '.vendor/**/*',
+]
+
+# Configure metadata-json-lint
+MetadataJsonLint.options.strict_license = false
 
 if Bundler.rubygems.find_name('github_changelog_generator').any?
   GitHubChangelogGenerator::RakeTask.new :changelog do |config|
@@ -85,3 +105,31 @@ EOM
   end
 end
 
+# Custom rake tasks
+desc 'Run acceptance tests'
+RSpec::Core::RakeTask.new(:acceptance) do |t|
+  t.pattern = 'spec/acceptance/**/*_spec.rb'
+end
+
+desc 'Run unit tests'
+RSpec::Core::RakeTask.new(:unit) do |t|
+  t.pattern = 'spec/{classes,defines,unit,functions,hosts,integration,types}/**/*_spec.rb'
+end
+
+desc 'Run all tests and checks'
+task :test => [
+  :metadata_lint,
+  :syntax,
+  :lint,
+  :rubocop,
+  :unit,
+]
+
+desc 'Run all tests including acceptance tests'
+task :test_with_acceptance => [
+  :test,
+  :acceptance,
+]
+
+# Make spec the default task
+task :default => :test

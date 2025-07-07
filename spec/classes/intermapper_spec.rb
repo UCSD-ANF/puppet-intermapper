@@ -6,6 +6,10 @@ describe 'intermapper', type: :class do
       if system == 'CentOS'
         let(:facts) do
           {
+            os: {
+              family: 'RedHat',
+              name: system,
+            },
             osfamily: 'RedHat',
             operatingsystem: system,
           }
@@ -13,6 +17,10 @@ describe 'intermapper', type: :class do
       else
         let(:facts) do
           {
+            os: {
+              family: system,
+              name: system,
+            },
             osfamily: system,
             operatingsystem: system,
           }
@@ -308,8 +316,12 @@ describe 'intermapper', type: :class do
     context 'on Solaris' do
       let(:facts) do
         {
-          osfamily: 'solaris',
-          operatingsystem: 'solaris',
+          os: {
+            family: 'Solaris',
+            name: 'Solaris',
+          },
+          osfamily: 'Solaris',
+          operatingsystem: 'Solaris',
         }
       end
 
@@ -332,6 +344,10 @@ describe 'intermapper', type: :class do
         context "with operatingsystem == #{osname}" do
           let(:facts) do
             {
+              os: {
+                family: 'RedHat',
+                name: osname,
+              },
               osfamily: 'RedHat',
               operatingsystem: osname,
             }

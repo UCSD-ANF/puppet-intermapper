@@ -1,5 +1,8 @@
+---
 fixtures:
-    forge_modules:
-        stdlib: "puppetlabs/stdlib"
-    symlinks:
-        intermapper: "#{source_dir}"
+  repositories:
+    stdlib:
+      repo: 'https://github.com/puppetlabs/puppetlabs-stdlib'
+      branch: 'main'
+  symlinks:
+    intermapper: "#{source_dir}"
