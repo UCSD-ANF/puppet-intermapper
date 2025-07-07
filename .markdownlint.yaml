@@ -1,0 +1,4 @@
+# Markdownlint configuration
+# Allow 120 character lines
+MD013:
+  line_length: 120

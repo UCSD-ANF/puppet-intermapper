@@ -4,10 +4,10 @@
 [![Puppet Forge](https://img.shields.io/puppetforge/v/UCSDANF/intermapper.svg)](https://forge.puppet.com/modules/UCSDANF/intermapper)
 [![Puppet Forge Downloads](https://img.shields.io/puppetforge/dt/UCSDANF/intermapper.svg)](https://forge.puppet.com/modules/UCSDANF/intermapper)
 
-#### Table of Contents
+## Table of Contents
 
 - [puppet-intermapper](#puppet-intermapper)
-      - [Table of Contents](#table-of-contents)
+  - [Table of Contents](#table-of-contents)
   - [Description](#description)
     - [Features](#features)
   - [Setup](#setup)
@@ -38,15 +38,23 @@
 
 ## Description
 
-The puppet-intermapper module manages the InterMapper network monitoring application by Help/Systems. This module handles installation, configuration, and management of InterMapper services, along with integration capabilities for Nagios plugins.
+The puppet-intermapper module manages the InterMapper network monitoring
+application by Fortra. This module handles installation, configuration,
+and management of InterMapper services, along with integration capabilities
+for Nagios plugins.
 
 ### Features
 
-- **Complete InterMapper lifecycle management**: Install, configure, and manage InterMapper services
-- **Multi-service support**: Manage main InterMapper service plus optional DataCenter and Flows services
-- **Nagios integration**: Symlink Nagios plugins into InterMapper Tools directory
-- **Extensible configuration**: Support for custom probes, icons, MIB files, and tools
-- **Modern Puppet practices**: Uses Hiera data hierarchy, proper data types, and current best practices
+- **Complete InterMapper lifecycle management**: Install, configure, and manage
+  InterMapper services
+- **Multi-service support**: Manage main InterMapper service plus optional
+  DataCenter and Flows services
+- **Nagios integration**: Symlink Nagios plugins into InterMapper Tools
+  directory
+- **Extensible configuration**: Support for custom probes, icons, MIB files,
+  and tools
+- **Modern Puppet practices**: Uses Hiera data hierarchy, proper data types,
+  and current best practices
 - **Comprehensive testing**: 100% test coverage with automated validation
 
 ## Setup
@@ -54,7 +62,7 @@ The puppet-intermapper module manages the InterMapper network monitoring applica
 ### Requirements
 
 - **Puppet**: 6.21.0 or later
-- **Operating Systems**: 
+- **Operating Systems**:
   - RedHat Enterprise Linux 7, 8, 9
   - CentOS 7, 8
   - Rocky Linux 8, 9
@@ -126,7 +134,9 @@ class { 'intermapper':
 }
 ```
 
-This creates symlinks in `/var/local/InterMapper_Settings/Tools/` pointing to the specified Nagios plugins, making them available for use in InterMapper probe definitions.
+This creates symlinks in `/var/local/InterMapper_Settings/Tools/` pointing to
+the specified Nagios plugins, making them available for use in InterMapper
+probe definitions.
 
 ### Hiera Configuration
 
@@ -191,7 +201,8 @@ Main class for managing InterMapper.
 - `package_name` (Variant[String[1], Array[String[1]]]): Package name(s) to install
 - `service_name` (String[1]): Name of the main InterMapper service
 - `nagios_link_plugins` (Array[String[1]]): List of Nagios plugins to symlink
-- `basedir` (Stdlib::Absolutepath): InterMapper installation directory (default: '/usr/local')
+- `basedir` (Stdlib::Absolutepath): InterMapper installation directory
+  (default: '/usr/local')
 - `vardir` (Stdlib::Absolutepath): InterMapper data directory (default: '/var/local')
 - `package_ensure` (String[1]): Package ensure state (default: 'present')
 - `package_manage` (Boolean): Whether to manage the package (default: true)

@@ -2,30 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
-## Post-Release 2.0.0 Updates
+## Release 2.0.1
 
-**Documentation & Project Infrastructure**
+### Documentation & Project Infrastructure
+
 - Added comprehensive README.md with complete module documentation
 - Added BSD 2-Clause LICENSE file with proper copyright attribution
 - Added CONTRIBUTING.md with development guidelines and standards
 - Enhanced project structure with proper open source project files
 - Fixed Markdown formatting issues and ensured markdownlint compliance
 - Added detailed usage examples, parameter documentation, and migration guides
+- Updated company references from Help/Systems to Fortra (current owner)
 
-**Improvements**
+### Improvements
+
 - Complete project documentation overhaul
 - Proper legal framework for open source distribution
 - Clear contributor guidelines and development standards
 - Enhanced user experience with comprehensive examples
 
+### Technical Details
+
+- All documentation passes markdownlint validation
+- README.md includes installation, usage, and migration guidance
+- CONTRIBUTING.md provides development standards and testing procedures
+- LICENSE file ensures proper open source distribution compliance
+
 ## Release 2.0.0
 
-**Breaking Changes**
+### Breaking Changes
+
 - Dropped support for Solaris platform
 - Removed deprecated params.pp pattern (replaced with Hiera data)
 - Modernized module structure following current Puppet best practices
 
-**Features**
+### Features
+
 - Implemented modern Hiera data hierarchy with OS-specific overrides
 - Added comprehensive Puppet-Strings documentation with @summary, @param, @api annotations
 - Modernized class containment using `contain` statements instead of anchor resources
@@ -34,13 +46,15 @@ All notable changes to this project will be documented in this file.
 - Automatic parameter lookup replaces inheritance patterns
 - Fixed parameter ordering (required parameters first)
 
-**Improvements**
+### Quality Improvements
+
 - Clean validation with no warnings or errors
 - Maintained 100% test coverage (301 examples, 0 failures)
 - Better separation of data and code for improved maintainability
 - Focused platform support on Linux distributions (RedHat, CentOS, Rocky, AlmaLinux)
 
-**Technical Details**
+### Implementation Details
+
 - Removed manifests/params.pp entirely
 - Data moved to data/common.yaml with defaults
 - Updated all spec files to remove Solaris test cases
@@ -49,18 +63,19 @@ All notable changes to this project will be documented in this file.
 
 ## Release 1.2.0
 
-**Features**
+### New Features
+
 - Comprehensive PDK 3.4.0 modernization
 - 100% test coverage achievement
 
-**Bugfixes**
+### Resolved Issues
 
-**Known Issues**
+### Outstanding Issues
 
 ## Release 1.0.1
 
-**Features**
+### Initial Features
 
-**Bugfixes**
+### Bug Fixes
 
-**Known Issues**
+### Known Issues

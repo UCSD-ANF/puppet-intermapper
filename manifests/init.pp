@@ -1,4 +1,4 @@
-# @summary Manages the InterMapper network monitoring package by Help/Systems
+# @summary Manages the InterMapper network monitoring package by Fortra
 #
 # This module installs and configures InterMapper, a network monitoring tool,
 # along with its optional DataCenter and Flows services. It can also manage

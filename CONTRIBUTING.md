@@ -1,6 +1,7 @@
 # Contributing to puppet-intermapper
 
-We welcome contributions to the puppet-intermapper module! This document outlines the process for contributing and the standards we expect.
+We welcome contributions to the puppet-intermapper module! This document outlines the process for contributing and
+the standards we expect.
 
 ## Getting Started
 
@@ -36,12 +37,14 @@ pdk validate
 ## Code Standards
 
 ### Puppet Code
+
 - Follow [Puppet Language Style Guide](https://puppet.com/docs/puppet/latest/style_guide.html)
 - Use modern Puppet practices (no inheritance, use data-in-modules)
 - Add proper data types to all parameters
 - Document all classes and defined types using Puppet Strings format
 
 ### Documentation
+
 - Use Puppet Strings format for all documentation:
   - `@summary` for brief descriptions
   - `@param` for parameter documentation
@@ -50,6 +53,7 @@ pdk validate
 - Update `README.md` if adding new features
 
 ### Testing
+
 - All new functionality must include tests
 - Maintain 100% test coverage
 - All tests must pass before submitting PR
@@ -58,6 +62,7 @@ pdk validate
 ## Supported Platforms
 
 This module supports:
+
 - RedHat Enterprise Linux 7, 8, 9
 - CentOS 7, 8
 - Rocky Linux 8, 9
@@ -73,6 +78,7 @@ This module supports:
    - Include detailed description if needed
 
 3. **Test your changes**:
+
    ```bash
    pdk test unit
    pdk validate
@@ -115,11 +121,13 @@ This project follows the [Puppet Community Code of Conduct](https://puppet.com/c
 
 ## License
 
-By contributing to this project, you agree that your contributions will be licensed under the BSD 2-Clause License.
+By contributing to this project, you agree that your contributions will be licensed under the
+BSD 2-Clause License.
 
 ## Contact
 
 For questions about contributing, please:
+
 - Open an issue on GitHub
 - Contact the maintainers
 
