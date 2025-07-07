@@ -1,6 +1,7 @@
+# @summary Manages the main InterMapper service
+# @api private
 class intermapper::service {
-  # TODO: Consider making this class private?
-  #private("Only should be called from the ${module_name} module")
+  assert_private()
 
   $manage_service_enable = $intermapper::service_ensure ? {
     true      => true,
@@ -9,8 +10,8 @@ class intermapper::service {
     'stopped' => false,
   }
 
-  if $::intermapper::service_manage {
-    service { $intermapper::service_name :
+  if $intermapper::service_manage {
+    service { $intermapper::service_name:
       ensure     => $intermapper::service_ensure,
       enable     => $manage_service_enable,
       provider   => $intermapper::service_provider,

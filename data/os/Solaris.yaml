@@ -1,0 +1,6 @@
+---
+intermapper::package_name: 'DARTinter'
+intermapper::package_provider: 'sun'
+intermapper::service_provider: 'init'
+intermapper::service_status_cmd: '/usr/bin/pgrep intermapperd'
+intermapper::service_has_restart: false

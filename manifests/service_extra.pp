@@ -1,14 +1,11 @@
-#
-# == Class: intermapper::service_extra
-#
-# Manages the InterMapper DataCenter and InterMapper Flows services.
+# @summary Manages the InterMapper DataCenter and InterMapper Flows services
 #
 # This is a separate class so that other modules can continue to set notifiers
 # on Class['intermapper::service'] and not restart imdc or imflows
 #
+# @api private
 class intermapper::service_extra {
-  # TODO: Consider making this class private?
-  #private("Only should be called from the ${module_name} module")
+  assert_private()
 
   $manage_imflows_enable = $intermapper::service_imflows_ensure ? {
     true      => true,
@@ -24,9 +21,9 @@ class intermapper::service_extra {
     'stopped' => false,
   }
 
-  if $::intermapper::service_manage {
-    if $::intermapper::service_imflows_manage {
-      service { $intermapper::service_imflows_name :
+  if $intermapper::service_manage {
+    if $intermapper::service_imflows_manage {
+      service { $intermapper::service_imflows_name:
         ensure     => $intermapper::service_imflows_ensure,
         enable     => $manage_imflows_enable,
         provider   => $intermapper::service_provider,
@@ -35,8 +32,8 @@ class intermapper::service_extra {
         hasrestart => $intermapper::service_has_restart,
       }
     }
-    if $::intermapper::service_imdc_manage {
-      service { $intermapper::service_imdc_name :
+    if $intermapper::service_imdc_manage {
+      service { $intermapper::service_imdc_name:
         ensure     => $intermapper::service_imdc_ensure,
         enable     => $manage_imdc_enable,
         provider   => $intermapper::service_provider,

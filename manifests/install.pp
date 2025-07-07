@@ -1,6 +1,7 @@
+# @summary Manages InterMapper package installation
+# @api private
 class intermapper::install {
-  # TODO: Consider making this class private?
-  #private("Only should be called from the ${module_name} module")
+  assert_private()
 
   if $intermapper::package_manage {
     package { $intermapper::package_name:
@@ -9,5 +10,4 @@ class intermapper::install {
       provider => $intermapper::package_provider,
     }
   }
-
 }

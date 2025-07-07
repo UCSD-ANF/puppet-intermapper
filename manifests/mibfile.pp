@@ -1,38 +1,40 @@
+# @summary Install a new SNMP MIB into Intermapper's MIB Files directory.
 #
-# == define: intermapper::mibfile
+# @param mibname
+#   The filename of the MIB File. Usually something like 'fa_40.mib'.
 #
-# Install a new SNMP MIB into Intermapper's MIB Files directory
+# @param ensure
+#   Works just like a file resource.
 #
-# ===Parameters
-#
-# [*ensure*]
-#   works just like a file resource
-#
-# [*mibname*]
-#   (namevar) The filename of the MIB File. Usually something like 'fa_40.mib'
-#
-# [*target*]
-#   If ensure is set to link, then link_target is used as the target parameter
+# @param target
+#   If ensure is set to link, then target is used as the target parameter
 #   for the underlying file resource. This attribute is mutually exclusive with
 #   source and content.
 #
-# [*source*]
+# @param source
 #   The source for the file, as a Puppet resource path. This attribute is
-#   mutally exclusive with soruce and target.
+#   mutually exclusive with content and target.
 #
-# [*content*]
+# @param content
 #   The desired contents of a file, as a string. This attribute is mutually
 #   exclusive with source and target.
 #
-
+# @param force
+#   Force the file operation if target exists.
+#
+# @param mode
+#   File mode, same format as a file resource.
+#
+# @api private
+#
 define intermapper::mibfile (
-  $mibname = $title,
-  $ensure  = 'present',
-  $target  = undef,
-  $source  = undef,
-  $content = undef,
-  $force   = undef,
-  $mode    = undef,
+  String[1] $mibname          = $title,
+  Variant[String[1], Stdlib::Absolutepath] $ensure = 'present',
+  Optional[Stdlib::Absolutepath] $target = undef,
+  Optional[String[1]] $source            = undef,
+  Optional[String] $content              = undef,
+  Optional[Boolean] $force               = undef,
+  Optional[Stdlib::Filemode] $mode       = undef,
 ) {
   include 'intermapper'
 

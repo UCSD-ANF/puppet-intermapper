@@ -1,45 +1,42 @@
+# @summary Install a new Intermapper icon into Intermapper's Custom Icons directory.
 #
-# == define: intermapper::tool
+# InterMapper looks in the Custom Icons directory for custom icon files.
 #
-# Install a new Intermapper tool into Intermapper's Tools directory.
+# @param iconname
+#   The filename of the Intermapper Icon. Usually something like 'myicon.png'.
 #
-# InterMapper looks in the Tools directory for scripts if the path isn't
-# set in the probe definition. This is also a good place to put libraries that
-# probes may need.
+# @param ensure
+#   Works just like a file resource.
 #
-# ===Parameters
-#
-# [*ensure*]
-#   works just like a file resource
-#
-# [*toolname*]
-#   (namevar) The filename of the Intermapper Tool. Usually
-#   something like 'edu.ucsd.antelope.check_q330' or 'nagios_q330_ping'
-#
-# [*target*]
-#   If ensure is set to link, then link_target is used as the target parameter
+# @param target
+#   If ensure is set to link, then target is used as the target parameter
 #   for the underlying file resource. This attribute is mutually exclusive with
 #   source and content.
 #
-# [*source*]
+# @param source
 #   The source for the file, as a Puppet resource path. This attribute is
-#   mutally exclusive with soruce and target.
+#   mutually exclusive with content and target.
 #
-# [*content*]
+# @param content
 #   The desired contents of a file, as a string. This attribute is mutually
 #   exclusive with source and target.
 #
-# [*mode*]
+# @param force
+#   Force the file operation if target exists.
+#
+# @param mode
 #   File mode, same format as a file resource.
 #
+# @api private
+#
 define intermapper::icon (
-  $iconname = $title,
-  $ensure = 'present',
-  $target = undef,
-  $source = undef,
-  $content = undef,
-  $force = undef,
-  $mode = undef,
+  String[1] $iconname         = $title,
+  Variant[String[1], Stdlib::Absolutepath] $ensure = 'present',
+  Optional[Stdlib::Absolutepath] $target = undef,
+  Optional[String[1]] $source            = undef,
+  Optional[String] $content              = undef,
+  Optional[Boolean] $force               = undef,
+  Optional[Stdlib::Filemode] $mode       = undef,
 ) {
   include 'intermapper'
 

@@ -1,157 +1,166 @@
+# @summary Manages the InterMapper network monitoring package by Help/Systems
 #
-# == Class: intermapper
+# This module installs and configures InterMapper, a network monitoring tool,
+# along with its optional DataCenter and Flows services. It can also manage
+# symlinks to Nagios plugins for use in InterMapper probes.
 #
-# Manage the Intermapper network monitoring package by Help/Systems
+# @param basedir
+#   The base directory where InterMapper is installed. Defaults to /usr/local
+#   by the package. Useful if the package has been relocated.
 #
-# === Parameters
-# [*basedir*]
-#   The base directory where Intermapper is installed. Defaults to /usr/local
-#   by the package. Useful if the package has been relocated
-#
-# [*vardir*]
+# @param vardir
 #   The directory that contains the InterMapper_Settings directory. Typically
-#   /var/local on newer versions of intermapper, but old versions had this set
-#   to /usr/local
+#   /var/local on newer versions of InterMapper, but old versions had this set
+#   to /usr/local.
 #
-# [*owner*]
-#   The owner of any files that this module installs. Default: intermapper
+# @param owner
+#   The owner of any files that this module installs.
 #
-# [*group*]
-#   The group of any files that this module installs. Default: intermapper
+# @param group
+#   The group of any files that this module installs.
 #
-# [*package_ensure*]
-#   Defaults to 'present'. Can be set to a specific version of Intermapper,
-#   or to 'latest' to ensure the package is always upgraded.
+# @param package_ensure
+#   Can be set to a specific version of InterMapper, or to 'latest' to ensure
+#   the package is always upgraded.
 #
-# [*package_manage*]
-#   If false, the package will not be managed by this class. Defaults to true.
+# @param package_manage
+#   If false, the package will not be managed by this class.
 #
-# [*package_name*]
-#   The name (or names) of the package to be installed. Defaults are
-#    OS-specific but you may override them here
+# @param package_name
+#   The name (or names) of the package to be installed. OS-specific defaults
+#   are provided via Hiera data.
 #
-# [*package_provider*]
-#   Normally undefined, this is set to 'sun' on Solaris platforms to work
-#   with sites that have set their default package provider to something
-#   different.
+# @param package_provider
+#   Package provider to use. OS-specific defaults are provided via Hiera data.
+#   Set to 'sun' on Solaris platforms.
 #
-# [*service_ensure*]
-#   Defaults to running. Can be any valid value for the ensure parameter for a
-#   service resource type.
+# @param package_source
+#   Optional package source location for custom installations.
 #
-# [*service_manage*]
-#   Defaults to true. If false, none of the services are managed. Disables
-#   service_extra_manage.
+# @param service_ensure
+#   Can be any valid value for the ensure parameter for a service resource type.
 #
-# [*service_imdc_manage*]
-#   Controls whether the extra service imdc is managed. Dependent
-#   on service_manage being true. Defaults to true. If false, the extra
-#   service imdc is not managed.
+# @param service_manage
+#   If false, none of the services are managed. Disables service_extra_manage.
 #
-# [*service_imflows_manage*]
-#   Controls whether the extra service imflows is managed. Dependent
-#   on service_manage being true. Defaults to true. If false, the extra
-#   service imflows is not managed.
+# @param service_imdc_manage
+#   Controls whether the extra service imdc is managed. Dependent on
+#   service_manage being true.
 #
-# [*service_imdc_ensure*]
-#   Defaults to stopped. If service_manage is true, the Intermapper Datacenter
-#   services are set to this value.
+# @param service_imflows_manage
+#   Controls whether the extra service imflows is managed. Dependent on
+#   service_manage being true.
 #
-# [*service_imflows_ensure*]
-#   Defaults to stopped. If service_manage is true, the IMFlows services are
-#   set to this value.
+# @param service_imdc_ensure
+#   If service_manage is true, the InterMapper DataCenter services are set to
+#   this value.
 #
-# [*service_name*]
-#   The name of the service(s) to manage. Defaults to "intermapperd"
+# @param service_imflows_ensure
+#   If service_manage is true, the IMFlows services are set to this value.
 #
-# [*service_imdc_name*]
-#   The name of the InterMapper Datacenter service(s) to manage. Defaults to
-#   "imdc"
+# @param service_name
+#   The name of the main service to manage. OS-specific defaults are provided
+#   via Hiera data.
 #
-# [*service_imflows_name*]
-#   The name of the IMFlows service(s) to manage. Defaults to "imflows"
+# @param service_imdc_name
+#   The name of the InterMapper DataCenter service to manage.
 #
-# [*service_provider*]
-#   Normally undefined, this is set to 'init' on Solaris platforms since
-#   Intermapper doesn't ship with an SMF service manifest on Solaris.
+# @param service_imflows_name
+#   The name of the IMFlows service to manage.
 #
-# [*service_status_cmd*]
-#   Normally undefined, this is set to use pgrep on Solaris platforms to make
-#   up for the lack of a status action in the Solaris init script provided with
-#   Intermapper
+# @param service_provider
+#   Service provider to use. OS-specific defaults are provided via Hiera data.
+#   Set to 'init' on Solaris platforms.
 #
-# [*service_has_restart*]
-#   Normally false except on Solaris. Controls the behavior of the service
-#   restart logic in Puppet.
+# @param service_status_cmd
+#   Custom status command. OS-specific defaults are provided via Hiera data.
+#   Used on Solaris platforms to work around init script limitations.
 #
-# [*nagios_ensure*]
+# @param service_has_restart
+#   Controls the behavior of the service restart logic in Puppet. OS-specific
+#   defaults are provided via Hiera data.
+#
+# @param nagios_ensure
 #   If nagios_manage is true, this controls whether Nagios resources are added
-#   or removed. Defaults to 'present'. Requires nagios_plugins_dir to be set
-#   unless nagios_ensure is set to 'missing' or 'absent'.
+#   or removed. Requires nagios_plugins_dir to be set unless nagios_ensure is
+#   set to 'missing' or 'absent'.
 #
-# [*nagios_manage*]
-#   Defaults to false. If false, no Nagios resources are managed. See caveat
-#   above about nagios_plugins_dir.
+# @param nagios_manage
+#   If false, no Nagios resources are managed.
 #
-# [*nagios_plugins_dir*]
-#   Location on the system where Nagios plugins typically live. Determining this
-#   is out of scope for this module, but you might try /usr/lib64/nagios-plugins
-#   on RHEL/CentOS 6.x. Note that this variable must be set if nagios_manage is
-#   true and nagios_ensure is 'present'.
+# @param nagios_plugins_dir
+#   Location on the system where Nagios plugins typically live. This variable
+#   must be set if nagios_manage is true and nagios_ensure is 'present'.
+#   Example: /usr/lib64/nagios-plugins on RHEL/CentOS.
 #
-# [*nagios_link_plugins*]
-#   A list of plugin names that should be symlinked from nagios_plugin_dir into
-#   $vardir/InterMapper_Settings/Tools for use by Intermapper probe definitions.
+# @param nagios_link_plugins
+#   A list of plugin names that should be symlinked from nagios_plugins_dir
+#   into $vardir/InterMapper_Settings/Tools for use by InterMapper probe
+#   definitions.
 #
-# ===Usage
+# @example Basic usage
+#   include intermapper
 #
-# The classes intermapper::service, intermapper::service_extra,
-# intermapper::install, and intermapper::nagios are not intended to be called
-# directly outside of this module. They can be used as notifiers and
-# subscription points however, so probes can be installed and the
-# Class[intermapper::service] can be set to subscribe to the probe files.
+# @example With Nagios integration
+#   class { 'intermapper':
+#     nagios_manage      => true,
+#     nagios_plugins_dir => '/usr/lib64/nagios-plugins',
+#   }
+#
+# @example Custom package and service configuration
+#   class { 'intermapper':
+#     package_ensure => 'latest',
+#     service_ensure => 'running',
+#     vardir         => '/opt/intermapper/var',
+#   }
 #
 class intermapper (
-  Stdlib::Absolutepath $basedir                = '/usr/local',
-  Stdlib::Absolutepath $vardir                 = '/var/local',
-  String[1] $owner                             = 'intermapper',
-  String[1] $group                             = 'intermapper',
-  String[1] $package_ensure                    = 'present',
-  Boolean $package_manage                      = true,
-  Variant[String[1], Array[String[1]]] $package_name = $intermapper::params::package_name,
-  Optional[String[1]] $package_provider        = $intermapper::params::package_provider,
-  Optional[String[1]] $package_source          = undef,
-  Boolean $service_manage                      = true,
-  Boolean $service_imdc_manage                 = true,
-  Boolean $service_imflows_manage              = true,
-  Stdlib::Ensure::Service $service_ensure      = 'running',
-  Stdlib::Ensure::Service $service_imdc_ensure = 'stopped',
-  Stdlib::Ensure::Service $service_imflows_ensure = 'stopped',
-  String[1] $service_name                      = $intermapper::params::service_name,
-  String[1] $service_imdc_name                 = 'imdc',
-  String[1] $service_imflows_name              = 'imflows',
-  Optional[String[1]] $service_provider        = $intermapper::params::service_provider,
-  Optional[String[1]] $service_status_cmd      = $intermapper::params::service_status_cmd,
-  Boolean $service_has_restart                 = $intermapper::params::service_has_restart,
+  # Required parameters (no defaults)
+  Variant[String[1], Array[String[1]]] $package_name,
+  String[1] $service_name,
+  Array[String[1]] $nagios_link_plugins,
+  # Optional parameters (with defaults)
+  Stdlib::Absolutepath $basedir                       = '/usr/local',
+  Stdlib::Absolutepath $vardir                        = '/var/local',
+  String[1] $owner                                     = 'intermapper',
+  String[1] $group                                     = 'intermapper',
+  String[1] $package_ensure                            = 'present',
+  Boolean $package_manage                              = true,
+  Optional[String[1]] $package_provider                = undef,
+  Optional[String[1]] $package_source                  = undef,
+  Boolean $service_manage                              = true,
+  Boolean $service_imdc_manage                         = true,
+  Boolean $service_imflows_manage                      = true,
+  Stdlib::Ensure::Service $service_ensure              = 'running',
+  Stdlib::Ensure::Service $service_imdc_ensure         = 'stopped',
+  Stdlib::Ensure::Service $service_imflows_ensure      = 'stopped',
+  String[1] $service_imdc_name                         = 'imdc',
+  String[1] $service_imflows_name                      = 'imflows',
+  Optional[String[1]] $service_provider                = undef,
+  Optional[String[1]] $service_status_cmd              = undef,
+  Boolean $service_has_restart                         = true,
   Enum['present', 'absent', 'missing'] $nagios_ensure = 'present',
-  Boolean $nagios_manage                       = false,
-  Optional[Stdlib::Absolutepath] $nagios_plugins_dir = undef,
-  Array[String[1]] $nagios_link_plugins        = $intermapper::params::nagios_link_plugins,
-) inherits intermapper::params {
+  Boolean $nagios_manage                               = false,
+  Optional[Stdlib::Absolutepath] $nagios_plugins_dir   = undef,
+) {
   if $nagios_manage {
     if $nagios_ensure == 'present' and $nagios_plugins_dir == undef {
       fail(
-        'nagios_plugins_dir must be specified when nagios_ensure is "present"')
+        'nagios_plugins_dir must be specified when nagios_ensure is "present"'
+      )
     }
   }
 
   $settingsdir = "${vardir}/InterMapper_Settings"
   $toolsdir = "${settingsdir}/Tools"
 
-  anchor { 'intermapper::begin': }
-  -> class { '::intermapper::install': }
-  -> class { '::intermapper::nagios': }
-  ~> class { '::intermapper::service': }
-  -> class { '::intermapper::service_extra': }
-  -> anchor { 'intermapper::end': }
+  contain intermapper::install
+  contain intermapper::nagios
+  contain intermapper::service
+  contain intermapper::service_extra
+
+  Class['intermapper::install']
+  -> Class['intermapper::nagios']
+  ~> Class['intermapper::service']
+  -> Class['intermapper::service_extra']
 }

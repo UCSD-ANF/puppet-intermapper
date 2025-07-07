@@ -1,1 +1,19 @@
---- {}
+---
+# Default values for all operating systems
+intermapper::package_name: 'InterMapper'
+intermapper::package_provider: ~
+intermapper::service_name: 'intermapperd'
+intermapper::service_provider: ~
+intermapper::service_status_cmd: ~
+intermapper::service_has_restart: true
+intermapper::nagios_link_plugins:
+  - 'check_nrpe'
+  - 'check_disk'
+  - 'check_file_age'
+  - 'check_icmp'
+  - 'check_mailq'
+  - 'check_tcp'
+  - 'check_udp'
+  - 'check_ftp'
+  - 'check_procs'
+  - 'check_snmp'
