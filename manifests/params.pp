@@ -1,28 +1,27 @@
 class intermapper::params {
-
-  $package_name = $::osfamily ? {
+  $package_name = $facts['os']['family'] ? {
     'Solaris' => 'DARTinter',
     default   => 'InterMapper',
   }
 
-  $package_provider = $::osfamily ? {
+  $package_provider = $facts['os']['family'] ? {
     'Solaris' => 'sun',
     default   => undef,
   }
 
   $service_name = 'intermapperd'
 
-  $service_provider = $::osfamily ? {
+  $service_provider = $facts['os']['family'] ? {
     'Solaris' => 'init',
     default   => undef,
   }
 
-  $service_status_cmd = $::osfamily ? {
+  $service_status_cmd = $facts['os']['family'] ? {
     'Solaris' => "/usr/bin/pgrep ${service_name}",
     default   => undef,
   }
 
-  $service_has_restart = $::osfamily ? {
+  $service_has_restart = $facts['os']['family'] ? {
     'Solaris' => false,
     default   => true,
   }
@@ -39,5 +38,4 @@ class intermapper::params {
     'check_procs',
     'check_snmp',
   ]
-
 }

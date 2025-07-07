@@ -26,8 +26,7 @@
 define intermapper::nagios_plugin_link (
   $nagios_plugins_dir,
   $ensure = 'present',
-){
-
+) {
   $manage_ensure = $ensure ? {
     'absent'  => 'absent',
     'missing' => 'absent',
@@ -44,5 +43,4 @@ define intermapper::nagios_plugin_link (
     ensure => $manage_ensure,
     target => $manage_target,
   }
-
 }

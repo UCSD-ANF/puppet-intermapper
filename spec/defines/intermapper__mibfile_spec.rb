@@ -11,6 +11,10 @@ describe 'intermapper::mibfile', type: :define do
       if system == 'CentOS'
         let(:facts) do
           {
+            os: {
+              family: 'RedHat',
+              name: system,
+            },
             osfamily: 'RedHat',
             operatingsystem: system,
           }
@@ -18,6 +22,10 @@ describe 'intermapper::mibfile', type: :define do
       else
         let(:facts) do
           {
+            os: {
+              family: system,
+              name: system,
+            },
             osfamily: system,
             operatingsystem: system,
           }

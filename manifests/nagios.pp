@@ -11,7 +11,7 @@ class intermapper::nagios {
       'UNSET'     => undef,
       default     => $intermapper::nagios_plugins_dir,
     }
-    intermapper::nagios_plugin_link{ $intermapper::nagios_link_plugins :
+    intermapper::nagios_plugin_link { $intermapper::nagios_link_plugins:
       ensure             => $intermapper::nagios_ensure,
       nagios_plugins_dir => $manage_npdir,
     }
