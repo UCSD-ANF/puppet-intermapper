@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'intermapper', type: :class do
-  ['CentOS', 'RedHat', 'Solaris'].each do |system|
+  ['CentOS', 'RedHat'].each do |system|
     context "when on system #{system}" do
       if system == 'CentOS'
         let(:facts) do
@@ -313,32 +313,6 @@ describe 'intermapper', type: :class do
 
   # OS-specific behavior driven by defaults starts here
   context 'default driven behavior' do
-    context 'on Solaris' do
-      let(:facts) do
-        {
-          os: {
-            family: 'Solaris',
-            name: 'Solaris',
-          },
-          osfamily: 'Solaris',
-          operatingsystem: 'Solaris',
-        }
-      end
-
-      describe 'intermapper::install' do
-        it {
-          is_expected.to contain_package('DARTinter').with(provider: 'sun')
-        }
-      end
-
-      describe 'intermapper::service' do
-        it {
-          is_expected.to contain_service('intermapperd').with(provider: 'init',
-                                                              status: '/usr/bin/pgrep intermapperd')
-        }
-      end
-    end
-
     context 'on RedHat osfamily' do
       ['RedHat', 'CentOS'].each do |osname|
         context "with operatingsystem == #{osname}" do

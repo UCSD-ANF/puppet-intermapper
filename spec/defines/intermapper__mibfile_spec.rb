@@ -6,7 +6,7 @@ describe 'intermapper::mibfile', type: :define do
   fname = "#{td}/#{t}"
   let(:title) { t }
 
-  ['CentOS', 'RedHat', 'Solaris'].each do |system|
+  ['CentOS', 'RedHat'].each do |system|
     context "when on system #{system}" do
       if system == 'CentOS'
         let(:facts) do

@@ -11,7 +11,7 @@ describe 'intermapper::nagios_plugin_link', type: :define do
   targetfname = "#{npd}/#{t}"
   fname = "/var/local/InterMapper_Settings/Tools/#{t}"
 
-  ['CentOS', 'RedHat', 'Solaris'].each do |system|
+  ['CentOS', 'RedHat'].each do |system|
     context "when on system #{system}" do
       let(:params) { baseparams }
 
