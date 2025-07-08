@@ -95,8 +95,36 @@
 #   into $vardir/InterMapper_Settings/Tools for use by InterMapper probe
 #   definitions.
 #
+# @param repo_manage
+#   If true, manage the InterMapper package repository. Only supported on
+#   Debian-based systems.
+#
+# @param repo_ensure
+#   Whether the repository should be present or absent.
+#
+# @param repo_url
+#   The URL of the InterMapper package repository.
+#
+# @param repo_key
+#   The GPG key ID for the repository.
+#
+# @param repo_key_source
+#   The URL to fetch the GPG key from.
+#
+# @param repo_release
+#   The release name for the repository. Defaults to '/' for InterMapper's
+#   repository structure.
+#
+# @param repo_repos
+#   The repository components to enable.
+#
 # @example Basic usage
 #   include intermapper
+#
+# @example With repository management (Debian/Ubuntu)
+#   class { 'intermapper':
+#     repo_manage => true,
+#   }
 #
 # @example With Nagios integration
 #   class { 'intermapper':
@@ -139,6 +167,13 @@ class intermapper (
   Enum['present', 'absent', 'missing'] $nagios_ensure = 'present',
   Boolean $nagios_manage                               = false,
   Optional[Stdlib::Absolutepath] $nagios_plugins_dir   = undef,
+  Boolean $repo_manage                                 = false,
+  Enum['present', 'absent'] $repo_ensure               = 'present',
+  Stdlib::HTTPUrl $repo_url                            = 'https://hsdownloads.helpsystems.com/intermapper/debian',
+  Optional[String[1]] $repo_key                        = undef,
+  Optional[Stdlib::HTTPUrl] $repo_key_source           = undef,
+  String[1] $repo_release                              = '/',
+  String[1] $repo_repos                                = 'main',
 ) {
   if $nagios_manage {
     if $nagios_ensure == 'present' and $nagios_plugins_dir == undef {
@@ -151,12 +186,14 @@ class intermapper (
   $settingsdir = "${vardir}/InterMapper_Settings"
   $toolsdir = "${settingsdir}/Tools"
 
+  contain intermapper::repo
   contain intermapper::install
   contain intermapper::nagios
   contain intermapper::service
   contain intermapper::service_extra
 
-  Class['intermapper::install']
+  Class['intermapper::repo']
+  -> Class['intermapper::install']
   -> Class['intermapper::nagios']
   ~> Class['intermapper::service']
   -> Class['intermapper::service_extra']

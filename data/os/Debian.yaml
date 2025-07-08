@@ -1,0 +1,9 @@
+---
+# Debian-specific configuration
+intermapper::package_name: 'intermapper'
+intermapper::service_name: 'intermapperd'
+# Repository configuration for Debian-based systems
+intermapper::repo_url: 'https://hsdownloads.helpsystems.com/intermapper/debian'
+intermapper::repo_key_source: 'https://hsdownloads.helpsystems.com/intermapper/debian/fortra-release-public.asc'
+intermapper::repo_release: '/'
+intermapper::repo_repos: 'main'

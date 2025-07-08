@@ -8,6 +8,7 @@ class intermapper::install {
       ensure   => $intermapper::package_ensure,
       source   => $intermapper::package_source,
       provider => $intermapper::package_provider,
+      tag      => 'intermapper',
     }
   }
 }

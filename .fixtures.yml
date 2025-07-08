@@ -4,5 +4,8 @@ fixtures:
     stdlib:
       repo: 'https://github.com/puppetlabs/puppetlabs-stdlib'
       branch: 'main'
+    apt:
+      repo: 'https://github.com/puppetlabs/puppetlabs-apt'
+      branch: 'main'
   symlinks:
     intermapper: "#{source_dir}"

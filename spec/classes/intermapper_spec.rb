@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'intermapper', type: :class do
-  ['CentOS', 'RedHat'].each do |system|
+  ['CentOS', 'RedHat', 'Debian', 'Ubuntu'].each do |system|
     context "when on system #{system}" do
       if system == 'CentOS'
         let(:facts) do
@@ -11,6 +11,17 @@ describe 'intermapper', type: :class do
               name: system,
             },
             osfamily: 'RedHat',
+            operatingsystem: system,
+          }
+        end
+      elsif ['Debian', 'Ubuntu'].include?(system)
+        let(:facts) do
+          {
+            os: {
+              family: 'Debian',
+              name: system,
+            },
+            osfamily: 'Debian',
             operatingsystem: system,
           }
         end
@@ -27,6 +38,7 @@ describe 'intermapper', type: :class do
         end
       end
 
+      it { is_expected.to contain_class('intermapper::repo') }
       it { is_expected.to contain_class('intermapper::install') }
       it { is_expected.to contain_class('intermapper::nagios') }
       it { is_expected.to contain_class('intermapper::service') }
@@ -41,7 +53,7 @@ describe 'intermapper', type: :class do
           }
         end
 
-        it { is_expected.to contain_package('intermapper').with_ensure('present') }
+        it { is_expected.to contain_package('intermapper').with_ensure('present').with_tag('intermapper') }
 
         describe 'should allow package ensure to be overridden' do
           let(:params) do
@@ -51,7 +63,7 @@ describe 'intermapper', type: :class do
             }
           end
 
-          it { is_expected.to contain_package('intermapper').with_ensure('latest') }
+          it { is_expected.to contain_package('intermapper').with_ensure('latest').with_tag('intermapper') }
         end
 
         describe 'should allow the package name to be overridden' do
@@ -61,7 +73,7 @@ describe 'intermapper', type: :class do
             }
           end
 
-          it { is_expected.to contain_package('foo') }
+          it { is_expected.to contain_package('foo').with_tag('intermapper') }
         end
 
         describe 'should allow the package name to be an array of names' do
@@ -71,8 +83,8 @@ describe 'intermapper', type: :class do
             }
           end
 
-          it { is_expected.to contain_package('foo') }
-          it { is_expected.to contain_package('bar') }
+          it { is_expected.to contain_package('foo').with_tag('intermapper') }
+          it { is_expected.to contain_package('bar').with_tag('intermapper') }
         end
 
         describe 'should allow the package to be unmanaged' do
@@ -97,7 +109,7 @@ describe 'intermapper', type: :class do
           it {
             is_expected.to contain_package('intermapper').with_provider(
               'somethingcool',
-            )
+            ).with_tag('intermapper')
           }
         end
       end # describe intermapper::install
@@ -235,6 +247,42 @@ describe 'intermapper', type: :class do
           }
         end
       end # describe intermapper::service
+
+      describe 'intermapper::repo' do
+        describe 'with defaults (repo_manage = false)' do
+          it { is_expected.not_to contain_apt__source('intermapper') }
+        end
+
+        if ['Debian', 'Ubuntu'].include?(system)
+          describe 'with repo_manage = true on Debian/Ubuntu' do
+            let(:params) do
+              {
+                repo_manage: true,
+              }
+            end
+
+            it { is_expected.to contain_apt__source('intermapper').with_location('https://hsdownloads.helpsystems.com/intermapper/debian') }
+            it { is_expected.to contain_apt__source('intermapper').with_key('name' => 'intermapper-release-key', 'source' => 'https://hsdownloads.helpsystems.com/intermapper/debian/fortra-release-public.asc') }
+          end
+
+          describe 'with repo_manage = true and custom parameters' do
+            let(:params) do
+              {
+                repo_manage: true,
+                repo_url: 'https://custom.repo.example.com/intermapper',
+                repo_key_source: 'https://custom.repo.example.com/key.asc',
+                repo_release: 'stable',
+                repo_repos: 'main contrib',
+              }
+            end
+
+            it { is_expected.to contain_apt__source('intermapper').with_location('https://custom.repo.example.com/intermapper') }
+            it { is_expected.to contain_apt__source('intermapper').with_key('name' => 'intermapper-release-key', 'source' => 'https://custom.repo.example.com/key.asc') }
+            it { is_expected.to contain_apt__source('intermapper').with_release('stable') }
+            it { is_expected.to contain_apt__source('intermapper').with_repos('main contrib') }
+          end
+        end
+      end # describe intermapper::repo
 
       describe 'intermapper::nagios' do
         describe 'with defaults' do
@@ -464,7 +512,7 @@ describe 'intermapper', type: :class do
                 }
               end
 
-              it { is_expected.to contain_package('InterMapper').with_ensure('present') }
+              it { is_expected.to contain_package('InterMapper').with_ensure('present').with_tag('intermapper') }
             end
           end
         end

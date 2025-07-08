@@ -15,7 +15,9 @@
     - [Installation](#installation)
   - [Usage](#usage)
     - [Basic Usage](#basic-usage)
+    - [Repository Management (Debian/Ubuntu)](#repository-management-debianubuntu)
     - [Advanced Configuration](#advanced-configuration)
+    - [Repository Management with Package Updates](#repository-management-with-package-updates)
     - [Nagios Integration](#nagios-integration)
     - [Hiera Configuration](#hiera-configuration)
     - [Custom Resources](#custom-resources)
@@ -47,6 +49,8 @@ for Nagios plugins.
 
 - **Complete InterMapper lifecycle management**: Install, configure, and manage
   InterMapper services
+- **APT repository support**: Automatic management of official InterMapper
+  repository on Debian/Ubuntu systems
 - **Multi-service support**: Manage main InterMapper service plus optional
   DataCenter and Flows services
 - **Nagios integration**: Symlink Nagios plugins into InterMapper Tools
@@ -67,6 +71,8 @@ for Nagios plugins.
   - CentOS 7, 8
   - Rocky Linux 8, 9
   - AlmaLinux 8, 9
+  - Debian 9, 10, 11, 12
+  - Ubuntu 18.04, 20.04, 22.04, 24.04
 
 ### Installation
 
@@ -92,6 +98,22 @@ Simple installation with default settings:
 include intermapper
 ```
 
+### Repository Management (Debian/Ubuntu)
+
+Enable automatic management of the official InterMapper APT repository:
+
+```puppet
+class { 'intermapper':
+  repo_manage => true,
+}
+```
+
+This will:
+- Add the official InterMapper repository to your APT sources
+- Import the GPG signing key
+- Install InterMapper from the repository
+- Keep the package updated when `package_ensure => 'latest'`
+
 ### Advanced Configuration
 
 Full configuration example:
@@ -113,6 +135,18 @@ class { 'intermapper':
     'check_load',
     'check_procs',
   ],
+}
+```
+
+### Repository Management with Package Updates
+
+For Debian/Ubuntu systems with automatic updates:
+
+```puppet
+class { 'intermapper':
+  repo_manage    => true,
+  package_ensure => 'latest',
+  service_ensure => 'running',
 }
 ```
 
@@ -210,6 +244,13 @@ Main class for managing InterMapper.
 - `service_manage` (Boolean): Whether to manage services (default: true)
 - `nagios_manage` (Boolean): Whether to manage Nagios integration (default: false)
 - `nagios_plugins_dir` (Optional[Stdlib::Absolutepath]): Path to Nagios plugins directory
+- `repo_manage` (Boolean): Whether to manage the InterMapper repository (default: false)
+- `repo_ensure` (Enum['present', 'absent']): Repository ensure state (default: 'present')
+- `repo_url` (Stdlib::HTTPUrl): Repository URL (default: official InterMapper repository)
+- `repo_key` (Optional[String[1]]): GPG key ID for the repository
+- `repo_key_source` (Optional[Stdlib::HTTPUrl]): URL to fetch GPG key from
+- `repo_release` (String[1]): Repository release (default: '/')
+- `repo_repos` (String[1]): Repository components (default: 'main')
 
 For complete parameter documentation, see the generated reference documentation.
 
@@ -229,8 +270,9 @@ puppet strings generate --format markdown
 
 ## Limitations
 
-- This module is designed for and tested on RedHat-family operating systems
-- InterMapper package must be available in configured repositories
+- This module is designed for and tested on RedHat-family and Debian-family operating systems
+- InterMapper package must be available in configured repositories or via repository management
+- Repository management only supported on Debian/Ubuntu systems
 - Nagios integration requires Nagios plugins to be installed separately
 
 ## Development
