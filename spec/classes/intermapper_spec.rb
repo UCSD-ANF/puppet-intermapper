@@ -487,6 +487,97 @@ describe 'intermapper', type: :class do
                 end
               end
             end
+
+            context 'on Debian osfamily' do
+              ['Debian', 'Ubuntu'].each do |debian_osname|
+                context 'with comprehensive nagios plugin testing' do
+                  context "with operatingsystem == #{debian_osname}" do
+                    let(:facts) do
+                      {
+                        os: {
+                          family: 'Debian',
+                          name: debian_osname,
+                        },
+                        osfamily: 'Debian',
+                        operatingsystem: debian_osname,
+                      }
+                    end
+
+                    describe 'with nagios enabled and all plugins' do
+                      let(:params) do
+                        {
+                          nagios_manage: true,
+                          nagios_ensure: 'present',
+                          nagios_plugins_dir: '/usr/lib/nagios-plugins',
+                          nagios_link_plugins: [
+                            'check_nrpe', 'check_disk', 'check_file_age',
+                            'check_ftp', 'check_icmp', 'check_mailq',
+                            'check_procs', 'check_snmp', 'check_tcp', 'check_udp'
+                          ],
+                        }
+                      end
+
+                      # Test that all the nagios plugin links are created
+                      [
+                        'check_nrpe', 'check_disk', 'check_file_age',
+                        'check_ftp', 'check_icmp', 'check_mailq',
+                        'check_procs', 'check_snmp', 'check_tcp', 'check_udp'
+                      ].each do |plugin|
+                        it do
+                          is_expected.to contain_intermapper__nagios_plugin_link(plugin).with(
+                            ensure: 'present',
+                            nagios_plugins_dir: '/usr/lib/nagios-plugins',
+                          )
+                        end
+
+                        # These should create intermapper::tool resources
+                        it do
+                          is_expected.to contain_intermapper__tool(plugin).with(
+                            ensure: 'link',
+                            target: "/usr/lib/nagios-plugins/#{plugin}",
+                          )
+                        end
+
+                        # These should create File resources in Tools directory (new Debian path)
+                        it do
+                          is_expected.to contain_file("/var/opt/helpsystems/intermapper/InterMapper_Settings/Tools/#{plugin}").with(
+                            ensure: 'link',
+                            target: "/usr/lib/nagios-plugins/#{plugin}",
+                          )
+                        end
+                      end
+                    end
+
+                    describe 'with custom tools to exercise more file resources' do
+                      let(:params) do
+                        {
+                          nagios_manage: true,
+                          nagios_ensure: 'present',
+                          nagios_plugins_dir: '/usr/lib/nagios-plugins',
+                          nagios_link_plugins: ['foo', 'bar', 'baz'],
+                        }
+                      end
+
+                      ['foo', 'bar', 'baz'].each do |tool|
+                        it do
+                          is_expected.to contain_intermapper__tool(tool).with(
+                            ensure: 'link',
+                            target: "/usr/lib/nagios-plugins/#{tool}",
+                          )
+                        end
+
+                        it do
+                          is_expected.to contain_file("/var/opt/helpsystems/intermapper/InterMapper_Settings/Tools/#{tool}").with(
+                            ensure: 'link',
+                            target: "/usr/lib/nagios-plugins/#{tool}",
+                          )
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+            end
           end
         end
 

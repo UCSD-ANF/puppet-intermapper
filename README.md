@@ -111,8 +111,13 @@ class { 'intermapper':
 This will:
 - Add the official InterMapper repository to your APT sources
 - Import the GPG signing key
-- Install InterMapper from the repository
+- Install InterMapper from the repository using the modern directory structure
 - Keep the package updated when `package_ensure => 'latest'`
+
+**Note**: On Debian/Ubuntu systems, InterMapper 6.6+ uses updated default directories:
+- Program files: `/opt/helpsystems/intermapper`
+- Data files: `/var/opt/helpsystems/intermapper`
+- Settings: `/var/opt/helpsystems/intermapper/InterMapper_Settings`
 
 ### Advanced Configuration
 

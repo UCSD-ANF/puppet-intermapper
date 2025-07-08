@@ -2,6 +2,10 @@
 # Debian-specific configuration
 intermapper::package_name: 'intermapper'
 intermapper::service_name: 'intermapperd'
+# Updated default directories for InterMapper 6.6+ on Debian/Ubuntu
+# Based on Linux File System Hierarchy Standard compliance
+intermapper::basedir: '/opt/helpsystems/intermapper'
+intermapper::vardir: '/var/opt/helpsystems/intermapper'
 # Repository configuration for Debian-based systems
 intermapper::repo_url: 'https://hsdownloads.helpsystems.com/intermapper/debian'
 intermapper::repo_key_source: 'https://hsdownloads.helpsystems.com/intermapper/debian/fortra-release-public.asc'
