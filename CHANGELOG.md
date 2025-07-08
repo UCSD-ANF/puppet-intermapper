@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 2.1.0
+
+### New Features
+
+- Added APT repository management for Debian/Ubuntu systems
+- Implemented official InterMapper repository support with GPG key validation
+- Added OS-specific Hiera data for Debian/Ubuntu platforms
+- Updated directory structures for InterMapper 6.6+ following Linux File System Hierarchy Standard
+
+### Platform Support
+
+- Enhanced Debian/Ubuntu support with native APT repository management
+- Added OS detection and platform-specific configuration
+- Comprehensive package repository integration with proper dependency ordering
+
+### Directory Structure Updates
+
+- Updated default directories for InterMapper 6.6+ on all platforms:
+  - Settings: `/var/opt/helpsystems/intermapper/InterMapper_Settings`
+  - Certificates: `/var/opt/helpsystems/intermapper/InterMapper_Settings/Certificates`
+  - Sounds: `/var/opt/helpsystems/intermapper/InterMapper_Settings/Sounds`
+  - Icons: `/var/opt/helpsystems/intermapper/InterMapper_Settings/Icons`
+  - MIB Files: `/var/opt/helpsystems/intermapper/InterMapper_Settings/MIB Files`
+  - Probes: `/var/opt/helpsystems/intermapper/InterMapper_Settings/Probes`
+  - Tools: `/var/opt/helpsystems/intermapper/InterMapper_Settings/Tools`
+  - Extensions: `/var/opt/helpsystems/intermapper/InterMapper_Settings/Extensions`
+  - Nagios Plugins: `/var/opt/helpsystems/intermapper/InterMapper_Settings/Tools/Nagios Plugins`
+
+### Dependencies
+
+- Added puppetlabs-apt module dependency (>= 9.0.0, < 10.0.0) for Debian/Ubuntu repository management
+- Updated metadata.json with Debian and Ubuntu OS support declarations
+
+### Technical Implementation
+
+- Enhanced [`intermapper::repo`](manifests/repo.pp) class with automatic GPG key management
+- Added comprehensive repository configuration with proper key validation
+- Implemented OS-specific logic for APT vs YUM repository management
+- Updated all define resources to use new directory structure defaults
+- Maintained 100% test coverage with updated directory path validation
+
+### Quality Improvements
+
+- All tests pass with 683 examples, 0 failures
+- Clean validation with no style or syntax issues
+- Comprehensive documentation updates for new features
+- Enhanced error handling for repository operations
+
 ## Release 2.0.1
 
 ### Documentation & Project Infrastructure

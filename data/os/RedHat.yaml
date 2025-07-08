@@ -1,0 +1,8 @@
+---
+# RedHat-specific configuration
+intermapper::package_name: 'InterMapper'
+intermapper::service_name: 'intermapperd'
+# Updated default directories for InterMapper 6.6+ on RedHat/CentOS
+# Based on Linux File System Hierarchy Standard compliance
+intermapper::basedir: '/opt/helpsystems/intermapper'
+intermapper::vardir: '/var/opt/helpsystems/intermapper'

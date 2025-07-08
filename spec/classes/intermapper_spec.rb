@@ -432,9 +432,9 @@ describe 'intermapper', type: :class do
                     )
                   end
 
-                  # These should create File resources in Tools directory
+                  # These should create File resources in Tools directory (new RedHat path)
                   it do
-                    is_expected.to contain_file("/var/local/InterMapper_Settings/Tools/#{plugin}").with(
+                    is_expected.to contain_file("/var/opt/helpsystems/intermapper/InterMapper_Settings/Tools/#{plugin}").with(
                       ensure: 'link',
                       target: "/usr/lib64/nagios-plugins/#{plugin}",
                     )
@@ -461,7 +461,7 @@ describe 'intermapper', type: :class do
                   end
 
                   it do
-                    is_expected.to contain_file("/var/local/InterMapper_Settings/Tools/#{tool}").with(
+                    is_expected.to contain_file("/var/opt/helpsystems/intermapper/InterMapper_Settings/Tools/#{tool}").with(
                       ensure: 'link',
                       target: "/usr/lib64/nagios-plugins/#{tool}",
                     )

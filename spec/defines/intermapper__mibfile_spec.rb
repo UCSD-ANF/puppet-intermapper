@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'intermapper::mibfile', type: :define do
   t = 'fa_40.mib'
-  td = '/var/local/InterMapper_Settings/MIB Files' # assume it hasn't been overriden
+  td = '/var/opt/helpsystems/intermapper/InterMapper_Settings/MIB Files' # new default directory
   fname = "#{td}/#{t}"
   let(:title) { t }
 

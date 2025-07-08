@@ -9,9 +9,9 @@
 #   by the package. Useful if the package has been relocated.
 #
 # @param vardir
-#   The directory that contains the InterMapper_Settings directory. Typically
-#   /var/local on newer versions of InterMapper, but old versions had this set
-#   to /usr/local.
+#   The directory that contains the InterMapper_Settings directory. Defaults to
+#   /var/opt/helpsystems/intermapper for InterMapper 6.6+ following Linux File
+#   System Hierarchy standards.
 #
 # @param owner
 #   The owner of any files that this module installs.
@@ -97,26 +97,29 @@
 #
 # @param repo_manage
 #   If true, manage the InterMapper package repository. Only supported on
-#   Debian-based systems.
+#   Debian-based systems using APT.
 #
 # @param repo_ensure
-#   Whether the repository should be present or absent.
+#   Whether the repository should be present or absent. Only effective when
+#   repo_manage is true.
 #
 # @param repo_url
-#   The URL of the InterMapper package repository.
+#   The URL of the InterMapper package repository. Defaults to the official
+#   Fortra repository.
 #
 # @param repo_key
-#   The GPG key ID for the repository.
+#   The GPG key ID for the repository. Optional if repo_key_source is provided.
 #
 # @param repo_key_source
-#   The URL to fetch the GPG key from.
+#   The URL to fetch the GPG key from. Optional if repo_key is provided.
+#   Defaults to Fortra's official signing key.
 #
 # @param repo_release
 #   The release name for the repository. Defaults to '/' for InterMapper's
-#   repository structure.
+#   flat repository structure.
 #
 # @param repo_repos
-#   The repository components to enable.
+#   The repository components to enable. Defaults to 'main'.
 #
 # @example Basic usage
 #   include intermapper
@@ -136,7 +139,7 @@
 #   class { 'intermapper':
 #     package_ensure => 'latest',
 #     service_ensure => 'running',
-#     vardir         => '/opt/intermapper/var',
+#     vardir         => '/var/opt/helpsystems/intermapper',
 #   }
 #
 class intermapper (
@@ -146,7 +149,7 @@ class intermapper (
   Array[String[1]] $nagios_link_plugins,
   # Optional parameters (with defaults)
   Stdlib::Absolutepath $basedir                       = '/usr/local',
-  Stdlib::Absolutepath $vardir                        = '/var/local',
+  Stdlib::Absolutepath $vardir                        = '/var/opt/helpsystems/intermapper',
   String[1] $owner                                     = 'intermapper',
   String[1] $group                                     = 'intermapper',
   String[1] $package_ensure                            = 'present',

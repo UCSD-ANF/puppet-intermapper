@@ -1,0 +1,61 @@
+{
+  "name": "Puppet Module Development - Intermapper",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "puppet.puppet-vscode",
+        "rebornix.ruby",
+        "redhat.vscode-yaml",
+        "yzhang.markdown-all-in-one",
+        "ms-vscode.vscode-json",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "esbenp.prettier-vscode",
+        "ms-vscode.remote-containers",
+        "formulahendry.auto-rename-tag"
+      ],
+      "settings": {
+        "puppet.installDirectory": "/opt/puppetlabs/bin",
+        "puppet.languageserver.enable": true,
+        "puppet.editorService.enable": true,
+        "puppet.validate.enable": true,
+        "puppet.lint.enable": true,
+        "ruby.intellisense": "rubyLocate",
+        "ruby.codeCompletion": "rcodetools",
+        "files.associations": {
+          "*.pp": "puppet",
+          "*.epp": "puppet"
+        },
+        "yaml.schemas": {
+          "https://json.schemastore.org/hiera.json": ["hiera.yaml", "**/data/**/*.yaml", "**/data/**/*.yml"]
+        },
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/bin/zsh"
+          }
+        }
+      }
+    }
+  },
+  "postCreateCommand": "bundle install && pdk --version",
+  "remoteUser": "puppet",
+  "workspaceFolder": "/workspace",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind"
+  ],
+  "forwardPorts": [],
+  "portsAttributes": {},
+  "containerEnv": {
+    "PUPPET_GEM_VERSION": "~> 7.0",
+    "FACTER_GEM_VERSION": "~> 4.0"
+  },
+  "runArgs": [
+    "--userns=keep-id"
+  ],
+  "containerUser": "puppet"
+}

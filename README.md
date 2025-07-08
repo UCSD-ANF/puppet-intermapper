@@ -114,10 +114,12 @@ This will:
 - Install InterMapper from the repository using the modern directory structure
 - Keep the package updated when `package_ensure => 'latest'`
 
-**Note**: On Debian/Ubuntu systems, InterMapper 6.6+ uses updated default directories:
-- Program files: `/opt/helpsystems/intermapper`
-- Data files: `/var/opt/helpsystems/intermapper`
+**Note**: InterMapper 6.6+ uses updated default directories on modern Linux systems:
+- Program files: `/opt/helpsystems/intermapper` (was `/usr/local`)
+- Data files: `/var/opt/helpsystems/intermapper` (was `/var/local`)
 - Settings: `/var/opt/helpsystems/intermapper/InterMapper_Settings`
+
+This applies to RedHat, CentOS, Rocky Linux, AlmaLinux, Debian, and Ubuntu systems.
 
 ### Advanced Configuration
 

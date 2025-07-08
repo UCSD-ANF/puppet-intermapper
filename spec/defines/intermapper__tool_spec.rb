@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'intermapper::tool', type: :define do
   t = 'edu.ucsd.testtool'
-  td = '/var/local/InterMapper_Settings/Tools' # assume it hasn't been overriden
+  td = '/var/opt/helpsystems/intermapper/InterMapper_Settings/Tools' # new default directory
   fname = "#{td}/#{t}"
   let(:title) { t }
 

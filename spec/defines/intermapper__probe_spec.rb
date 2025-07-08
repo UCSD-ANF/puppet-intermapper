@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'intermapper::probe', type: :define do
   t = 'edu.ucsd.testprobe'
-  td = '/var/local/InterMapper_Settings/Probes' # assume it hasn't been overriden
+  td = '/var/opt/helpsystems/intermapper/InterMapper_Settings/Probes' # new default directory
   fname = "#{td}/#{t}"
   let(:title) { t }
 

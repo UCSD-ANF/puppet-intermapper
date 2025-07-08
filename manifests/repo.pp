@@ -1,4 +1,9 @@
 # @summary Manages InterMapper package repository
+#
+# This class manages the InterMapper package repository for Debian-based systems.
+# It automatically configures the official Fortra repository with GPG key validation
+# and ensures proper package ordering with repository updates.
+#
 # @api private
 class intermapper::repo {
   assert_private()
@@ -11,14 +16,15 @@ class intermapper::repo {
           include apt
         }
 
-        # Determine release if not specified
-        # Note: InterMapper's official repository uses "/" as the release
+        # InterMapper's official repository uses "/" as the release
+        # due to its flat repository structure
         $release = $intermapper::repo_release ? {
           undef   => '/',
           default => $intermapper::repo_release,
         }
 
-        # Determine key configuration
+        # Configure GPG key for repository validation
+        # Supports both key ID and key source URL methods
         if $intermapper::repo_key_source {
           $key_config = {
             'name'   => 'intermapper-release-key',
@@ -32,7 +38,7 @@ class intermapper::repo {
           $key_config = undef
         }
 
-        # Manage repository
+        # Configure APT repository with proper key validation
         apt::source { 'intermapper':
           ensure   => $intermapper::repo_ensure,
           location => $intermapper::repo_url,
@@ -41,11 +47,13 @@ class intermapper::repo {
           key      => $key_config,
         }
 
-        # Update apt cache before installing packages
+        # Ensure repository is configured and apt cache is updated
+        # before any InterMapper packages are installed
         Apt::Source['intermapper'] -> Exec['apt_update'] -> Package<| tag == 'intermapper' |>
       }
       default: {
-        # Repository management only supported on Debian-based systems
+        # Repository management is only supported on Debian-based systems
+        # Other systems should use manual package installation
         if $intermapper::repo_ensure == 'present' {
           warning("Repository management is only supported on Debian-based systems, not ${facts['os']['family']}")
         }

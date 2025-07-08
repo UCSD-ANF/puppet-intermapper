@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'intermapper::icon', type: :define do
   t = 'edu.ucsd.testicon'
-  td = '/var/local/InterMapper_Settings/Custom Icons' # assume it hasn't been overriden
+  td = '/var/opt/helpsystems/intermapper/InterMapper_Settings/Custom Icons' # new default directory
   fname = "#{td}/#{t}"
   let(:title) { t }
 
