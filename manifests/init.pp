@@ -32,7 +32,6 @@
 #
 # @param package_provider
 #   Package provider to use. OS-specific defaults are provided via Hiera data.
-#   Set to 'sun' on Solaris platforms.
 #
 # @param package_source
 #   Optional package source location for custom installations.
@@ -70,11 +69,9 @@
 #
 # @param service_provider
 #   Service provider to use. OS-specific defaults are provided via Hiera data.
-#   Set to 'init' on Solaris platforms.
 #
 # @param service_status_cmd
 #   Custom status command. OS-specific defaults are provided via Hiera data.
-#   Used on Solaris platforms to work around init script limitations.
 #
 # @param service_has_restart
 #   Controls the behavior of the service restart logic in Puppet. OS-specific
